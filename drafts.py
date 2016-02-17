@@ -10,6 +10,10 @@ import pickle
 with open('~/.todo') as data_file:
     all_tasks, done_tasks, failed_tasks = pickle.load(data_file)
 
+# +----------------+
+# | TODO: argparse |
+# +----------------+
+
 
 class TaskItem:
 
@@ -24,11 +28,11 @@ class TaskItem:
             self.important = False
 
     def __print__(self):
+
         print('[' + '!' * self.important + '_' * (1 - self.important) + '] ',
               end=' ')
         print(self.task, end='\t')
         print(self.id, end='\n')
-
 
     def cross_off(self, completed=True):
         self.active = False
