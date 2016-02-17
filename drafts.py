@@ -24,8 +24,10 @@ class TaskItem:
             self.important = False
 
     def __print__(self):
-        print('[' +
-              self.important * '!' + (1 - self.important) * '_' '] ' + str(self.task ) +
+        print('[' + '!' * self.important + '_' * (1 - self.important) + '] ',
+              end=' ')
+        print(self.task, end='\t')
+        print(self.id, end='\n')
 
 
     def cross_off(self, completed=True):
