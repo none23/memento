@@ -33,7 +33,6 @@ class TaskItem:
             self.important = True
         else:
             self.important = False
-        return self
 
     def __print__(self):
 
