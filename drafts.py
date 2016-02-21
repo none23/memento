@@ -41,13 +41,6 @@ class TaskItem:
         print(self.essence, end='\t')
         print(self.id, end='\n')
 
-    def cross_off(self, completed=True):
-        self.active = False
-        if completed:
-            self.important = True
-        else:
-            self.important = False
-
 
 def print_current(all_tasks):
     print('Don\'t forget to:')
