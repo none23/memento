@@ -6,6 +6,9 @@ import pickle
 # Packages {{{ }}}
 # Define params {{{ }}}
 
+# store data in this file
+dump_file = '/home/n/.todo'
+
 
 def load_data(a_file):
     with open(a_file, 'rb') as data_file:
@@ -13,10 +16,7 @@ def load_data(a_file):
     return the_data
 
 
-def save_data(a_file):
-    global all_tasks
-    global done_tasks
-    global failed_tasks
+def save_data(a_file, all_tasks, done_tasks, failed_tasks):
     with open(a_file, 'wb') as data_file:
         the_data = [all_tasks, done_tasks, failed_tasks]
         pickle.dump(the_data, data_file)
@@ -33,6 +33,7 @@ class TaskItem:
             self.important = True
         else:
             self.important = False
+        return self
 
     def __print__(self):
 
@@ -72,10 +73,7 @@ def main():
     all_tasks = []
     done_tasks = []
     failed_tasks = []
-
-    # store data in this file
-    dump_file = '/home/n/.todo'
-
+    global dump_file
     # read the data
     [all_tasks, done_tasks, failed_tasks] = load_data(dump_file)
 
@@ -91,11 +89,27 @@ def main():
         print("memento.py is broken!")
         exit(1)
 
-def add_task(...):
-    ...
-    # TODO
 
-def finish_task(task_id, failed=False, ...)
-    ...
-    # TODO
+def add_task(new_task, important=False, data_file=dump_file):
+    """instializes a new TaskItem instance and adds it to the data_file"""
+
+    new_item = TaskItem(essence=new_task, important=important)
+    fresh_data = load_data(data_file)
+    fresh_data[0].append(new_item)
+    save_data(data_file, *fresh_data)
+
+
+def finish_task(target_id, failed=False, data_file=dump_file):
+    data = load_data(data_file)
+    for entry in data[0]:
+        if entry.id == target_id:
+            entry.active = False
+            if failed is False:
+                data[1].append(entry)
+                return "task marked as complete!"
+            else:
+                data[2].append(entry)
+                return "task marked as failed!"
+            return "task found, but error happened"
+        return "could'n find specified task"
 
