@@ -1,13 +1,22 @@
 #!/usr/bin/python
 
+import sys
 import time
 import pickle
+import argparse
 
 # Packages {{{ }}}
 # Define params {{{ }}}
 
 # store data in this file
 dump_file = '/home/n/.todo'
+
+
+
+
+
+
+
 
 
 def load_data(a_file):
@@ -33,21 +42,14 @@ class TaskItem:
             self.important = True
         else:
             self.important = False
-        return self
 
-    def __print__(self):
-
-        print('\t[' + '!' * self.important + '_' * (1 - self.important) + '] ',
-              end=' ')
-        print(self.essence, end='\t')
-        print(self.id, end='\n')
-
-    def cross_off(self, completed=True):
-        self.active = False
-        if completed:
-            self.important = True
+    def __str__(self):
+        if self.important:
+            str_to_print = "  [!]   "
         else:
-            self.important = False
+            str_to_print = "  [_]   "
+        str_to_print += str(self.essence) + "     " + str(self.id)
+        return str_to_print
 
 
 def print_current(all_tasks):
@@ -58,7 +60,9 @@ def print_current(all_tasks):
     return
 
 
-def print_past(done_tasks, failed_tasks):
+def display_past(dump_file):
+    """print past tasks (completed and failed)"""
+
     print('Completed successfully:')
     for task in done_tasks:
         print(task)
@@ -67,14 +71,8 @@ def print_past(done_tasks, failed_tasks):
         print(task)
 
 
-def main():
+def display_active(dump_file=dump_file):
     """prints active tasks (if present) on starting a shell (zsh/bash/...)"""
-
-    all_tasks = []
-    done_tasks = []
-    failed_tasks = []
-    global dump_file
-    # read the data
     [all_tasks, done_tasks, failed_tasks] = load_data(dump_file)
 
     # print a todo list unless it's empty
@@ -112,3 +110,49 @@ def finish_task(target_id, failed=False, data_file=dump_file):
                 return "task marked as failed!"
             return "task found, but error happened"
         return "could'n find specified task"
+
+
+if __name__ == __main__:
+    all_tasks = []
+    done_tasks = []
+    failed_tasks = []
+    # parse arguments
+    parser = argparse.ArgumentParser()
+    parse_gr = parser.add_mutually_exclusive_group()
+    parse_subgr = parse_gr.add_mutually_exclusive_group()
+    parse_subgr.add_argument("-n", "--new", type=str, nargs="+",
+                             help="add new task")
+    parse_subgr.add_argument("-i", "--important", action="store_true",
+                             help="mark new task as important")
+    parse_gr.add_argument("-d", "--done", type=int,
+                          help="mark task as done")
+    parse_gr.add_argument("-f", "--failed", type=int,
+                          help="mark task as failed")
+    parse_pr = parser.add_mutually_exclusive_group()
+    parse_pr.add_argument("-s", "--show", action="store_true",
+                          help="display active tasks")
+    parse_pr.add_argument("-a", "--all", action="store_true", metavar=hist,
+                          help="display active tasks")
+    args = parser.parse_args()
+
+    if args.new:
+        description = " ".join(*args.new)
+        add_task(description, args.important)
+    elif args.done:
+        finish_task(args.done)
+    elif args.failed:
+        finish_task(args.done, failed=True)
+    else:
+        display_active()
+        sys.exit(0)
+
+    if args.show:
+        display_active()
+        sys.exit(0)
+
+    if args.hist:
+        print_past()
+        sys.exit(0)
+
+
+
