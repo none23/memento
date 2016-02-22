@@ -12,13 +12,6 @@ import argparse
 dump_file = '/home/n/.todo'
 
 
-
-
-
-
-
-
-
 def load_data(a_file):
     with open(a_file, 'rb') as data_file:
         the_data = pickle.load(data_file)
@@ -106,13 +99,10 @@ def finish_task(target_id, failed=False, data_file=dump_file):
         if entry.id == target_id:
             entry.active = False
             if failed is False:
-                data[1].append(entry)
-                return "task marked as complete!"
+                data[1].append(entry.essence)
             else:
-                data[2].append(entry)
-                return "task marked as failed!"
-            return "task found, but error happened"
-        return "could'n find specified task"
+                data[2].append(entry.essence)
+    save_data(data_file, *data)
 
 
 if __name__ == "__main__":
@@ -142,6 +132,7 @@ if __name__ == "__main__":
         description = " ".join(args.new)
         add_task(description, args.important)
     elif args.done:
+        print(args.done)
         finish_task(args.done)
     elif args.failed:
         finish_task(args.done, failed=True)
