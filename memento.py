@@ -139,7 +139,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.new:
-        description = " ".join(*args.new)
+        description = " ".join(args.new)
         add_task(description, args.important)
     elif args.done:
         finish_task(args.done)
