@@ -60,8 +60,10 @@ def print_current(all_tasks):
     return
 
 
-def display_past(dump_file):
+def display_past(dump_file=dump_file):
     """print past tasks (completed and failed)"""
+
+    [all_tasks, done_tasks, failed_tasks] = load_data(dump_file)
 
     print('Completed successfully:')
     for task in done_tasks:
@@ -73,6 +75,7 @@ def display_past(dump_file):
 
 def display_active(dump_file=dump_file):
     """prints active tasks (if present) on starting a shell (zsh/bash/...)"""
+
     [all_tasks, done_tasks, failed_tasks] = load_data(dump_file)
 
     # print a todo list unless it's empty
@@ -112,7 +115,7 @@ def finish_task(target_id, failed=False, data_file=dump_file):
         return "could'n find specified task"
 
 
-if __name__ == __main__:
+if __name__ == "__main__":
     all_tasks = []
     done_tasks = []
     failed_tasks = []
@@ -131,7 +134,7 @@ if __name__ == __main__:
     parse_pr = parser.add_mutually_exclusive_group()
     parse_pr.add_argument("-s", "--show", action="store_true",
                           help="display active tasks")
-    parse_pr.add_argument("-a", "--all", action="store_true", metavar=hist,
+    parse_pr.add_argument("--hist", action="store_true",
                           help="display active tasks")
     args = parser.parse_args()
 
@@ -142,17 +145,11 @@ if __name__ == __main__:
         finish_task(args.done)
     elif args.failed:
         finish_task(args.done, failed=True)
+    elif args.hist:
+        display_past()
     else:
         display_active()
-        sys.exit(0)
-
-    if args.show:
-        display_active()
-        sys.exit(0)
-
-    if args.hist:
-        print_past()
-        sys.exit(0)
+    sys.exit(0)
 
 
 
