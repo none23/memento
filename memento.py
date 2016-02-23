@@ -80,7 +80,7 @@ def display_active(dump_file=dump_file):
         print_current(all_tasks)
     else:
         # error
-        print("memento.py is broken!")
+        print("memento data is invalid!")
         exit(1)
 
 
@@ -93,15 +93,19 @@ def add_task(new_task, important=False, data_file=dump_file):
     save_data(data_file, *fresh_data)
 
 
-def finish_task(target_id, failed=False, data_file=dump_file):
+def finish_task(target_id, failed, data_file=dump_file):
+    """mark active task as done/failed"""
+
     data = load_data(data_file)
     for entry in data[0]:
         if entry.id == target_id:
-            entry.active = False
-            if failed is False:
-                data[1].append(entry.essence)
-            else:
-                data[2].append(entry.essence)
+            # prevent finishing a task multiple times
+            if entry.active:
+                entry.active = False
+                if failed is False:
+                    data[1].append(entry.essence)
+                else:
+                    data[2].append(entry.essence)
     save_data(data_file, *data)
 
 
@@ -133,7 +137,7 @@ if __name__ == "__main__":
         add_task(description, args.important)
     elif args.done:
         print(args.done)
-        finish_task(args.done)
+        finish_task(args.done, failed=False)
     elif args.failed:
         finish_task(args.done, failed=True)
     elif args.hist:
@@ -141,6 +145,3 @@ if __name__ == "__main__":
     else:
         display_active()
     sys.exit(0)
-
-
-
