@@ -26,10 +26,9 @@ def save_data(a_file, all_tasks, done_tasks, failed_tasks):
 
 class TaskItem:
 
-    def __init__(self, essence, important=False):
+    def __init__(self, essence, id, important=False):
         self.active = True
-        # unique id of a class instance (=seconds since writing this code)
-        self.id = int(time.time()) - 1455707700
+        self.id = id
         self.essence = essence
         if important:
             self.important = True
@@ -87,10 +86,11 @@ def display_active(dump_file=dump_file):
 def add_task(new_task, important=False, data_file=dump_file):
     """instializes a new TaskItem instance and adds it to the data_file"""
 
-    new_item = TaskItem(essence=new_task, important=important)
-    fresh_data = load_data(data_file)
-    fresh_data[0].append(new_item)
-    save_data(data_file, *fresh_data)
+    data = load_data(data_file)
+    new_item = TaskItem(essence=new_task, important=important,
+                        id=len(data[0])+1)
+    data[0].append(new_item)
+    save_data(data_file, *data)
 
 
 def finish_task(target_id, failed, data_file=dump_file):
